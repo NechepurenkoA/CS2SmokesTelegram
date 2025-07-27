@@ -28,4 +28,4 @@ black = "^25.1.0"
 [tool.isort]
 profile = "black"
 skip_glob = ["**/migrations/*.py"]
-src_paths = ["src/", "/api/", "/bot/"]
+src_paths = ["src/api", "src/bot",]

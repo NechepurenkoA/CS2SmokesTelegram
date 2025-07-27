@@ -1,7 +1,8 @@
 from django.contrib import admin
 from django.urls import path
-from lineups.api import router as lineups_router
 from ninja import NinjaAPI
+
+from lineups.api import router as lineups_router
 from telegram_users.api import router as telegram_user_router
 
 api = NinjaAPI(
