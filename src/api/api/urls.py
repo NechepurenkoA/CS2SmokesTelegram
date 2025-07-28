@@ -1,3 +1,5 @@
+from django.conf import settings
+from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import path
 from ninja import NinjaAPI
@@ -11,10 +13,14 @@ api = NinjaAPI(
     description="CS2Smokes API",
 )
 
-api.add_router("/users/", telegram_user_router)
-api.add_router("/lineups/", lineups_router)
+api.add_router("users", telegram_user_router)
+api.add_router("lineups", lineups_router)
 
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("api/", api.urls),
 ]
+
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+    urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
