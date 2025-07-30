@@ -1,0 +1,66 @@
+version: '3.12'
+
+services:
+  db:
+    image: ${POSTGRES_IMAGE}
+    container_name: db
+    restart: always
+    volumes:
+      - db_data:/var/lib/postgresql/data/
+    expose:
+      - "5432"
+    env_file:
+      - ../.env
+    healthcheck:
+      test: [ "CMD-SHELL", "sh -c 'pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}'" ]
+      interval: 3s
+      timeout: 3s
+      retries: 5
+
+  redis:
+    image: ${REDIS_IMAGE}
+    container_name: redis
+    ports:
+      - "6379:6379"
+
+  backend:
+    build:
+      context: ..
+      dockerfile: /src/backend/Dockerfile
+    image: social_network_backend:latest
+    container_name: backend
+    restart: always
+    volumes:
+      - static:/app/static/
+      - media:/app/media/
+      - ../.data/logs/:/app/.data/logs/
+    command: >
+      bash -c "python manage.py migrate &&
+               python manage.py collectstatic --clear --noinput &&
+               uvicorn WEB_social_network.asgi:application --host 0.0.0.0 --port 8000"
+    expose:
+      - "8000"
+    env_file:
+      - ../.env
+    depends_on:
+      db:
+        condition: service_healthy
+
+  nginx:
+    image: ${NGINX_IMAGE}
+    container_name: nginx
+    ports:
+      - "80:80"
+    volumes:
+      - ./default.conf:/etc/nginx/conf.d/default.conf
+      - static:/var/html/static/
+      - media:/var/html/media/
+    env_file:
+      - ../.env
+    depends_on:
+      - backend
+
+volumes:
+  static:
+  media:
+  db_data:
