@@ -11,7 +11,8 @@ SECRET_KEY = os.getenv("SECRET_KEY")
 
 DEBUG = True if os.getenv("DEBUG") == "True" else False
 
-ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS").split(" ")
+ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "*").split(" ")
+CSRF_TRUSTED_ORIGINS = os.getenv("CSRF_TRUSTED_ORIGINS").split(" ")
 
 INSTALLED_APPS = [
     "django.contrib.admin",
@@ -52,6 +53,7 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = "api.wsgi.application"
+ASGI_APPLICATION = "api.asgi.application"
 
 if os.getenv("SQLITE") == "True":
     DATABASES = {
