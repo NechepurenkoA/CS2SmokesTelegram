@@ -11,10 +11,11 @@ api = NinjaAPI(
     title="CS2SmokesTelegram",
     version="1.0.0",
     description="CS2Smokes API",
+    docs_url="/docs/",
 )
 
-api.add_router("users", telegram_user_router)
-api.add_router("lineups", lineups_router)
+api.add_router("users/", telegram_user_router)
+api.add_router("lineups/", lineups_router)
 
 urlpatterns = [
     path("admin/", admin.site.urls),
