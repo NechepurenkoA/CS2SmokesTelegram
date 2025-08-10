@@ -206,5 +206,6 @@ __marimo__/
 static/
 media/
 
-# requirements
+# Logs, requirements and etc.
 requirements/
+.data/

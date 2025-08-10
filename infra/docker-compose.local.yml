@@ -14,19 +14,19 @@ services:
       db:
         condition: service_healthy
 
-#  bot:
-#    extends:
-#      file: common-services.yml
-#      service: bot
-#    depends_on:
-#      - backend
+  bot:
+    extends:
+      file: common-services.yml
+      service: bot
+    depends_on:
+      - backend
 
   nginx:
     extends:
       file: common-services.yml
       service: nginx
     depends_on:
-#      - bot
+      - bot
       - backend
 
 volumes:

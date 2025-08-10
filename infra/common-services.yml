@@ -10,6 +10,7 @@ services:
     expose:
       - "5432"
     env_file:
+      - ../.env
       - .env
     healthcheck:
       test: [ "CMD-SHELL", "sh -c 'pg_isready -U $${DB_USER} -d $${DB_NAME}'" ]
@@ -27,7 +28,7 @@ services:
     volumes:
       - static:/app/static/
       - media:/app/media/
-#     - ../.data/logs/:/.data/logs/
+#      - ../.data/logs/:/.data/logs/
     command: >
       bash -c "python manage.py migrate &&
                python manage.py collectstatic --clear --noinput &&
@@ -35,10 +36,28 @@ services:
     expose:
       - "8000"
     env_file:
-      - .env
+      - ../.env
     depends_on:
       db:
         condition: service_healthy
+
+  bot:
+    build:
+      context: ..
+      dockerfile: /src/bot/Dockerfile
+    image: cs2smokes_bot:latest
+    container_name: bot
+    restart: always
+    volumes:
+      - static:/app/static/
+      - media:/app/media/
+      - ../.data/bot_logs/:/.data/logs/
+    command: >
+      bash -c "python aiogram_run.py"
+    expose:
+      - "8000"
+    env_file:
+      - ../.env
 
   nginx:
     image: ${NGINX_IMAGE}
@@ -50,6 +69,7 @@ services:
       - static:/var/html/static/
       - media:/var/html/media/
     env_file:
+      - ../.env
       - .env
 
 volumes:

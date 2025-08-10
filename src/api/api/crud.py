@@ -11,8 +11,8 @@ class DatabaseCrud:
     async def list(self, **kwargs):
         """Return all objects in the database."""
         queryset = await sync_to_async(list)(
-            self.model_class.objects.all().filter(**kwargs)
-        )  # noqa
+            self.model_class.objects.all().filter(**kwargs)  # noqa
+        )
         return queryset
 
     async def get(self, obj_id: int):
@@ -23,5 +23,7 @@ class DatabaseCrud:
     async def create(self, **payload):
         """Create a new object."""
         instance = await sync_to_async(self.model_class.objects.create)(**payload)
-        await sync_to_async(instance.save)()
         return instance
+
+    async def check_if_exists(self, **payload):
+        return await sync_to_async(self.model_class.objects.filter(**payload).exists)()
